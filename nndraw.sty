@@ -1,0 +1,115 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{nndraw}[2021/06/20 Neural Networks Draw LaTeX package]
+
+\RequirePackage{tikz}
+
+\pgfdeclarelayer{back}
+\pgfsetlayers{back,main}
+
+\newcommand\nnlayerNoText[1]{}
+
+\newif\ifnnlayerHasBias
+\pgfkeys{
+ /nnlayer/.is family, /nnlayer,
+ default/.style = {title = , text = \nnlayerNoText, hasbias = true, bias = , color = , biascolor = },
+ title/.estore in = \nnlayerTitle,
+ text/.store in = \nnlayerText,
+ hasbias/.is if = nnlayerHasBias,
+ bias/.estore in = \nnlayerBias,
+ color/.estore in = \nnlayerColor,
+ biascolor/.estore in = \nnlayerBiasColor,
+}
+
+\newcounter{numlayers}
+\newcounter{nninputlayer}
+\newcounter{lastnnsize}
+
+\tikzstyle{neuron}=[circle, minimum size=6mm, fill=gray!70]
+\tikzstyle{neuron_connection}=[->, shorten >=1pt, gray!70]
+
+\newcommand\inputtext[1]{$s[#1]$}
+
+\newcommand\layertitle[1]{
+    \node[text width = \fullyconnectednnTextWidth, align = center] at (\fullyconnectednnLayersep * \thenumlayers,\fullyconnectednnTitleY) {#1};
+}
+
+\newcommand\nnlayer[2][]{
+    \pgfkeys{/nnlayer, default, #1}
+    \layertitle{\nnlayerTitle}
+    \if\thenninputlayer0
+        \setcounter{nninputlayer}{#2}
+    \fi
+    \foreach \i in {1,...,#2}
+    {
+        \node[neuron, yshift=(#2 - \thenninputlayer)*5 mm, fill=\nnlayerColor] (\thenumlayers-\i) at (\thenumlayers * \fullyconnectednnLayersep,-\i) {\nnlayerText{\i}};
+    }
+    \if\thelastnnsize0
+    \else
+        \ifnnlayerHasBias
+            \node[neuron, yshift=5mm, fill=\nnlayerBiasColor] (bias-\thenumlayers) at (\thenumlayers * \fullyconnectednnLayersep -\fullyconnectednnLayersep + \fullyconnectednnBiasX, \fullyconnectednnBiasY) {\nnlayerBias};
+        \fi
+        \begin{pgfonlayer}{back}
+            % node connections
+            \foreach \i in {1,...,\thelastnnsize}
+            {
+                \foreach \j in {1,...,#2}
+                {
+                    \draw[neuron_connection] (\the\numexpr\thenumlayers-1\relax-\i) -- (\thenumlayers-\j);
+                }
+            }
+            % bias connections
+            \ifnnlayerHasBias
+                \foreach \j in {1,...,#2}
+                {
+                    \draw[neuron_connection] (bias-\thenumlayers) -- (\thenumlayers-\j);
+                }
+            \fi
+        \end{pgfonlayer}
+    \fi
+    \setcounter{lastnnsize}{#2}
+    \stepcounter{numlayers}
+}
+
+\newif\iffullyconnectednnInout
+
+\pgfkeys{
+ /fullyconnectednn/.is family, /fullyconnectednn,
+ default/.style = {input = \nnlayerNoText, output = \nnlayerNoText, layersep = 3, biasx = 0.75, biasy = -8.75, titley = 0.75, inout = true, text width = 2cm},
+ input/.store in = \fullyconnectednnInput,
+ output/.store in = \fullyconnectednnOutput,
+ layersep/.estore in = \fullyconnectednnLayersep,
+ biasx/.estore in = \fullyconnectednnBiasX,
+ biasy/.estore in = \fullyconnectednnBiasY,
+ titley/.estore in = \fullyconnectednnTitleY,
+ inout/.is if = fullyconnectednnInout,
+ text width/.estore in = \fullyconnectednnTextWidth,
+}
+
+\newenvironment{fullyconnectednn}[1][]
+    {
+    \pgfkeys{/fullyconnectednn, default, #1}
+    \begin{center}
+    \begin{tikzpicture}
+    \setcounter{numlayers}{0}
+    \setcounter{nninputlayer}{0}
+    \setcounter{lastnnsize}{0}
+    }
+    {
+    \iffullyconnectednnInout
+    \begin{pgfonlayer}{back}
+    % Inputs
+    \foreach \i in {1,...,\thenninputlayer}
+    {            
+        \draw[<-, shorten <=1pt] (0-\i) -- ++(-1,0) node[left]{\fullyconnectednnInput{\i}};
+    }
+     
+    % Outputs
+    \foreach \i in {1,...,\thelastnnsize}
+    {
+        \draw[->, shorten <=1pt] (\the\numexpr\thenumlayers-1\relax-\i) -- ++(1,0) node[right]{\fullyconnectednnOutput{\i}};
+    }
+    \end{pgfonlayer}
+    \fi
+    \end{tikzpicture}
+    \end{center}
+    }

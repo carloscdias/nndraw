@@ -1,0 +1,264 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2021 by <Carlos Cardoso Dias> <<carlosdias.dev@gmail.com>>
+% ---------------------------------------------------------------------------
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is <+maintainer+>.
+%
+% This work consists of the files nndraw.dtx and nndraw.ins
+% and the derived filebase nndraw.sty.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{nndraw.dtx}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+%<package>\ProvidesPackage{nndraw}
+%<*package>
+    [<+date+> <+version+> <+description+>]
+%</package>
+%
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage{nndraw}[<+date+>]
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{nndraw.dtx}
+  \PrintChanges
+  \PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+% \CheckSum{134}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+%
+%
+% \changes{<+version+>}{<+date+>}{Converted to DTX file}
+%
+% \DoNotIndex{\newcommand,\newenvironment}
+%
+% \providecommand*{\url}{\texttt}
+% \GetFileInfo{nndraw.dtx}
+% \title{The \textsf{nndraw} package}
+% \author{<+author+> \\ \url{<+email+>}}
+% \date{\fileversion~from \filedate}
+%
+% \maketitle
+%
+% \section{Introduction}
+%
+% Put text here.
+%
+% \section{Usage}
+%
+% Put text here.
+%
+%
+% \DescribeMacro{\nnlayerNoText}
+%
+%
+% \DescribeMacro{\inputtext}
+%
+%
+% \DescribeMacro{\layertitle}
+%
+%
+% \DescribeMacro{\nnlayer}
+%
+%
+% \DescribeEnv{fullyconnectednn}
+%
+
+%
+% \StopEventually{}
+%
+% \section{Implementation}
+%
+% \iffalse
+%<*package>
+% \fi
+%
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{nndraw}[2021/06/20 Neural Networks Draw LaTeX package]
+\RequirePackage{tikz}
+\pgfdeclarelayer{back}
+\pgfsetlayers{back,main}
+%    \end{macrocode}
+%
+% \begin{macro}{\nnlayerNoText}
+%    \begin{macrocode}
+\newcommand\nnlayerNoText[1]{}
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\newif\ifnnlayerHasBias
+\pgfkeys{
+ /nnlayer/.is family, /nnlayer,
+ default/.style = {title = , text = \nnlayerNoText, hasbias = true, bias = , color = , biascolor = },
+ title/.estore in = \nnlayerTitle,
+ text/.store in = \nnlayerText,
+ hasbias/.is if = nnlayerHasBias,
+ bias/.estore in = \nnlayerBias,
+ color/.estore in = \nnlayerColor,
+ biascolor/.estore in = \nnlayerBiasColor,
+}
+\newcounter{numlayers}
+\newcounter{nninputlayer}
+\newcounter{lastnnsize}
+\tikzstyle{neuron}=[circle, minimum size=6mm, fill=gray!70]
+\tikzstyle{neuron_connection}=[->, shorten >=1pt, gray!70]
+%    \end{macrocode}
+%
+% \begin{macro}{\inputtext}
+%    \begin{macrocode}
+\newcommand\inputtext[1]{$s[#1]$}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\layertitle}
+%    \begin{macrocode}
+\newcommand\layertitle[1]{
+    \node[text width = \fullyconnectednnTextWidth, align = center] at (\fullyconnectednnLayersep * \thenumlayers,\fullyconnectednnTitleY) {#1};
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\nnlayer}
+%    \begin{macrocode}
+\newcommand\nnlayer[2][]{
+    \pgfkeys{/nnlayer, default, #1}
+    \layertitle{\nnlayerTitle}
+    \if\thenninputlayer0
+        \setcounter{nninputlayer}{#2}
+    \fi
+    \foreach \i in {1,...,#2}
+    {
+        \node[neuron, yshift=(#2 - \thenninputlayer)*5 mm, fill=\nnlayerColor] (\thenumlayers-\i) at (\thenumlayers * \fullyconnectednnLayersep,-\i) {\nnlayerText{\i}};
+    }
+    \if\thelastnnsize0
+    \else
+        \ifnnlayerHasBias
+            \node[neuron, yshift=5mm, fill=\nnlayerBiasColor] (bias-\thenumlayers) at (\thenumlayers * \fullyconnectednnLayersep -\fullyconnectednnLayersep + \fullyconnectednnBiasX, \fullyconnectednnBiasY) {\nnlayerBias};
+        \fi
+        \begin{pgfonlayer}{back}
+%    \end{macrocode}
+% node connections
+%    \begin{macrocode}
+            \foreach \i in {1,...,\thelastnnsize}
+            {
+                \foreach \j in {1,...,#2}
+                {
+                    \draw[neuron_connection] (\the\numexpr\thenumlayers-1\relax-\i) -- (\thenumlayers-\j);
+                }
+            }
+%    \end{macrocode}
+% bias connections
+%    \begin{macrocode}
+            \ifnnlayerHasBias
+                \foreach \j in {1,...,#2}
+                {
+                    \draw[neuron_connection] (bias-\thenumlayers) -- (\thenumlayers-\j);
+                }
+            \fi
+        \end{pgfonlayer}
+    \fi
+    \setcounter{lastnnsize}{#2}
+    \stepcounter{numlayers}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\newif\iffullyconnectednnInout
+\pgfkeys{
+ /fullyconnectednn/.is family, /fullyconnectednn,
+ default/.style = {input = \nnlayerNoText, output = \nnlayerNoText, layersep = 3, biasx = 0.75, biasy = -8.75, titley = 0.75, inout = true, text width = 2cm},
+ input/.store in = \fullyconnectednnInput,
+ output/.store in = \fullyconnectednnOutput,
+ layersep/.estore in = \fullyconnectednnLayersep,
+ biasx/.estore in = \fullyconnectednnBiasX,
+ biasy/.estore in = \fullyconnectednnBiasY,
+ titley/.estore in = \fullyconnectednnTitleY,
+ inout/.is if = fullyconnectednnInout,
+ text width/.estore in = \fullyconnectednnTextWidth,
+}
+%    \end{macrocode}
+%
+% \begin{environment}{fullyconnectednn}
+%    \begin{macrocode}
+\newenvironment{fullyconnectednn}[1][]
+    {
+    \pgfkeys{/fullyconnectednn, default, #1}
+    \begin{center}
+    \begin{tikzpicture}
+    \setcounter{numlayers}{0}
+    \setcounter{nninputlayer}{0}
+    \setcounter{lastnnsize}{0}
+    }
+    {
+    \iffullyconnectednnInout
+    \begin{pgfonlayer}{back}
+%    \end{macrocode}
+% Inputs
+%    \begin{macrocode}
+    \foreach \i in {1,...,\thenninputlayer}
+    {            
+        \draw[<-, shorten <=1pt] (0-\i) -- ++(-1,0) node[left]{\fullyconnectednnInput{\i}};
+    }
+     
+%    \end{macrocode}
+% Outputs
+%    \begin{macrocode}
+    \foreach \i in {1,...,\thelastnnsize}
+    {
+        \draw[->, shorten <=1pt] (\the\numexpr\thenumlayers-1\relax-\i) -- ++(1,0) node[right]{\fullyconnectednnOutput{\i}};
+    }
+    \end{pgfonlayer}
+    \fi
+    \end{tikzpicture}
+    \end{center}
+    }
+%    \end{macrocode}
+% \end{environment}
+%
+
+%
+% \iffalse
+%</package>
+% \fi
+%
+% \Finale
+\endinput
