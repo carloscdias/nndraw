@@ -1,0 +1,43 @@
+\documentclass[preview,border=4mm,convert={density=600,outext=.png}]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage{nndraw}
+
+\begin{document}
+
+\newcommand\inputLayerText[1]{$s[#1]$}
+\newcommand\outputLayerText[1]{$y$}
+\newcommand\inputText[1]{$i_#1$}
+\newcommand\hiddenOneText[1]{$h^1_#1$}
+\newcommand\hiddenTwoText[1]{$h^2_#1$}
+\newcommand\outputText[1]{$y_#1$}
+
+\begin{fullyconnectednn}[input = \inputLayerText, output = \outputLayerText]
+    \nnlayer[title = Input layer,
+             text = \inputText,
+             color = green!40]{7}
+    \nnlayer[title = Hidden layer \#1,
+             text = \hiddenOneText,
+             bias = $b_1$,
+             color = blue!10,
+             biascolor = red!20]{8}
+    \nnlayer[title = Hidden layer \#2,
+             text = \hiddenTwoText,
+             bias = $b_2$,
+             color = yellow!60]{8}
+    \nnlayer[title = Output layer,
+             text = \outputText,
+             bias = $b_3$]{1}
+\end{fullyconnectednn}
+
+\vspace{3cm}
+
+\begin{fullyconnectednn}[biasy = -4.5,
+                         titley = 1,
+                         inout = false]
+    \nnlayer[title = Input layer]{2}
+    \nnlayer[title = Hidden layer]{4}
+    \nnlayer[title = Ouput layer, hasbias = false]{1}
+\end{fullyconnectednn}
+
+\end{document}
+
