@@ -27,15 +27,10 @@
 \tikzstyle{neuron}=[circle, minimum size=6mm, fill=gray!70]
 \tikzstyle{neuron_connection}=[->, shorten >=1pt, gray!70]
 
-\newcommand\inputtext[1]{$s[#1]$}
-
-\newcommand\layertitle[1]{
-    \node[text width = \fullyconnectednnTextWidth, align = center] at (\fullyconnectednnLayersep * \thenumlayers,\fullyconnectednnTitleY) {#1};
-}
-
 \newcommand\nnlayer[2][]{
     \pgfkeys{/nnlayer, default, #1}
-    \layertitle{\nnlayerTitle}
+    \node[text width = \fullyconnectednnTextWidth, align = center] at (\fullyconnectednnLayersep *
+    \thenumlayers,\fullyconnectednnTitleY) {\nnlayerTitle};
     \if\thenninputlayer0
         \setcounter{nninputlayer}{#2}
     \fi
