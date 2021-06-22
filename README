@@ -1,0 +1,39 @@
+NAME
+    nndraw -- a LaTeX package which provides utilities to draw neural networks
+
+VERSION
+    Version: 1.0 
+
+COPYRIGHT
+    Copyright (C) 2021 by Carlos Cardoso Dias <carlosdias.dev@gmail.com>
+    --------------------------------------------------------------------------
+    This work may be distributed and/or modified under the
+    conditions of the LaTeX Project Public License, either version 1.3
+    of this license or (at your option) any later version.
+    The latest version of this license is in
+      http://www.latex-project.org/lppl.txt
+    and version 1.3 or later is part of all distributions of LaTeX
+    version 2005/12/01 or later.
+
+DESCRIPTION
+    Draws fully connected neural networks in a simple way
+
+USAGE
+    \usepackage{nndraw}
+    \begin{document}
+    \begin{fullyconnectednn}[biasy = -4.5,
+                             titley = 1,
+                             inout = false]
+        \nnlayer[title = Input layer]{2}
+        \nnlayer[title = Hidden layer]{4}
+        \nnlayer[title = Ouput layer, hasbias = false]{1}
+    \end{fullyconnectednn}
+    \end{document}
+
+AUTHOR
+    Carlos Cardoso Dias
+
+    E-mail: carlosdias.dev@gmail.com
+
+    WWW: <https://carloscdias.com/>
+
