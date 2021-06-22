@@ -76,11 +76,36 @@
 %
 % \section{Introduction}
 %
-This will appear in the introduction section.
+\textbf{nndraw} is a \LaTeX package which provides utilities to draw neural networks in an efficient way.
+Currently this package provides utilities to draw fully connected feedforward neural networks with an arbitrary
+number of layers described inside the `fullyconnectednn` environment using the command `nnlayer`.
 %
 % \section{Usage}
 %
-This will appear in the Usage section.
+An example of usage is shown below, in this example, a fully connected feedforward
+deep neural network is provided with two inputs in the first layer, one hidden layer
+with four neurons and one output layer with one output. This example shows how easy it is
+to customize the presence/absence of biases in any layer as well as its position.
+
+\begin{verbatim}
+\begin{fullyconnectednn}[biasy = -4.5,
+                         titley = 1,
+                         inout = false]
+    \nnlayer[title = Input layer]{2}
+    \nnlayer[title = Hidden layer]{4}
+    \nnlayer[title = Ouput layer, hasbias = false]{1}
+\end{fullyconnectednn}
+\end{verbatim}
+
+\noindent Which is drawn as
+
+\begin{fullyconnectednn}[biasy = -4.5,
+                         titley = 1,
+                         inout = false]
+    \nnlayer[title = Input layer]{2}
+    \nnlayer[title = Hidden layer]{4}
+    \nnlayer[title = Ouput layer, hasbias = false]{1}
+\end{fullyconnectednn}
 %
 %
 % \StopEventually{}

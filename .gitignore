@@ -1,3 +1,7 @@
 *.tar.gz
 *.ins
 *.dtx
+*.log
+*.aux
+*.idx
+*.glo

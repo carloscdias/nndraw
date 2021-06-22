@@ -16,9 +16,12 @@ COPYRIGHT
     version 2005/12/01 or later.
 
 DESCRIPTION
-    Draws fully connected neural networks in a simple way
+    Draws fully connected neural networks in a simple and efficient way
 
 USAGE
+    Usage example: a fully connected neural network with input and output layers
+    and one hidden layer.
+
     \usepackage{nndraw}
     \begin{document}
     \begin{fullyconnectednn}[biasy = -4.5,

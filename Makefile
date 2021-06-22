@@ -11,7 +11,7 @@ doc: generate
 	pdflatex $(FILE).dtx
 
 generate:
-	sty2dtx $(FILE).sty -IOBD -t dtx_template -T ins_template --author $(AUTHOR) --email $(EMAIL) --version $(VERSION) --description $(DESCRIPTION) --usage $(DESCRIPTION)
+	sty2dtx $(FILE).sty -IOBD -t dtx_template -T ins_template --author $(AUTHOR) --email $(EMAIL) --version $(VERSION) --description $(DESCRIPTION)
 
 clean:
-	rm $(FILE).{aux,glo,idx,log,pdf,dtx,ins}
+	rm $(FILE).{aux,glo,idx,log,pdf,dtx,ins,tar.gz}
