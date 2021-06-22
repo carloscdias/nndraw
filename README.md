@@ -1,6 +1,6 @@
-# NN Draw
+# nndraw 
 
-NN Draw is a LaTeX package which provides utilities to draw neural networks.
+nndraw is a LaTeX package which provides utilities to draw neural networks.
 
 Currently it contains the `fullyconnectednn` environment and the `nnlayer` command.
 
